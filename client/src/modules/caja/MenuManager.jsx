@@ -12,7 +12,7 @@ export default function MenuManager({ menu, onClose }) {
 
   const handleAddNew = () => {
     setEditingId('new');
-    setEditForm({ name: '', price: '', category: 'cafes', is_active: true });
+    setEditForm({ name: '', price: '', category: 'principales', is_active: true });
   };
 
   const handleSave = async () => {
@@ -59,10 +59,10 @@ export default function MenuManager({ menu, onClose }) {
               <input type="text" placeholder="Nombre (ej. Empanadas)" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} style={{ flex: 2, padding: '0.75rem', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid var(--surface-border)' }} />
               <input type="number" placeholder="Precio ($)" value={editForm.price} onChange={e => setEditForm({...editForm, price: e.target.value})} style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid var(--surface-border)' }} />
               <select value={editForm.category} onChange={e => setEditForm({...editForm, category: e.target.value})} style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid var(--surface-border)' }}>
-                <option value="cafes">Cafés / Bebidas</option>
-                <option value="postres">Postres</option>
-                <option value="sandwiches">Sándwiches / Salados</option>
-                <option value="extras">Extras</option>
+                <option value="principales">Platos Principales</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="acompañantes">Acompañantes</option>
+                <option value="arte">Arte y Cerámica</option>
               </select>
               <button className="btn btn-success" onClick={handleSave}>Guardar</button>
               <button className="btn btn-outline" onClick={() => setEditingId(null)}>Cancelar</button>
@@ -89,10 +89,10 @@ export default function MenuManager({ menu, onClose }) {
                       <input type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} style={{ flex: 2, padding: '0.75rem', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid var(--surface-border)' }} />
                       <input type="number" value={editForm.price} onChange={e => setEditForm({...editForm, price: e.target.value})} style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid var(--surface-border)' }} />
                       <select value={editForm.category} onChange={e => setEditForm({...editForm, category: e.target.value})} style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid var(--surface-border)' }}>
-                        <option value="cafes">Cafés / Bebidas</option>
-                        <option value="postres">Postres</option>
-                        <option value="sandwiches">Sándwiches / Salados</option>
-                        <option value="extras">Extras</option>
+                        <option value="principales">Platos Principales</option>
+                        <option value="bebidas">Bebidas</option>
+                        <option value="acompañantes">Acompañantes</option>
+                        <option value="arte">Arte y Cerámica</option>
                       </select>
                       <button className="btn btn-success" onClick={handleSave}>Guardar</button>
                       <button className="btn btn-outline" onClick={() => setEditingId(null)}>Cancelar</button>
