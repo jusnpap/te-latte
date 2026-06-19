@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../../supabase';
 
-export default function ContabilidadView({ socket }) {
+export default function ContabilidadView() {
   const [reports, setReports] = useState([]);
   
   // Fechas locales (YYYY-MM-DD)
@@ -10,32 +11,33 @@ export default function ContabilidadView({ socket }) {
   const [endDate, setEndDate] = useState(today);
 
   useEffect(() => {
-    socket.on('reports_data', (data) => {
-      setReports(data || []);
-    });
-
-    return () => {
-      socket.off('reports_data');
-    };
-  }, [socket]);
-
-  useEffect(() => {
     fetchReports();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate]);
 
-  const fetchReports = () => {
+  const fetchReports = async () => {
     if (!startDate || !endDate) return;
     
-    // Convertir a inicio y fin del día local
-    // Hacemos el parse para que abarque desde las 00:00:00 hasta las 23:59:59 de las fechas seleccionadas
     const startParts = startDate.split('-');
     const start = new Date(startParts[0], startParts[1] - 1, startParts[2], 0, 0, 0, 0);
     
     const endParts = endDate.split('-');
     const end = new Date(endParts[0], endParts[1] - 1, endParts[2], 23, 59, 59, 999);
 
-    socket.emit('request_reports', { startDate: start.toISOString(), endDate: end.toISOString() });
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('status', 'pagada')
+      .gte('closed_at', start.toISOString())
+      .lte('closed_at', end.toISOString())
+      .order('closed_at', { ascending: false });
+
+    if (!error && data) {
+      const formattedOrders = data.map(o => ({ 
+        id: o.id, tableId: o.table_id, status: o.status, items: o.items, closedAt: o.closed_at, paymentMethod: o.payment_method 
+      }));
+      setReports(formattedOrders);
+    }
   };
 
   const calculateTotals = () => {
@@ -144,12 +146,12 @@ export default function ContabilidadView({ socket }) {
                 </tr>
               </thead>
               <tbody>
-                {reports.slice().reverse().map(order => {
+                {reports.slice().map(order => {
                   const sub = order.items.reduce((acc, i) => acc + (i.price * i.quantity), 0);
                   const final = sub + (sub * 0.16);
                   return (
                     <tr key={order.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                      <td style={{ padding: '1rem' }}>#{order.id}</td>
+                      <td style={{ padding: '1rem' }} title={order.id}>#{order.id.split('-')[0]}</td>
                       <td style={{ padding: '1rem' }}>Mesa {order.tableId}</td>
                       <td style={{ padding: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                         {new Date(order.closedAt).toLocaleString()}

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../../supabase';
 import MesaMap from '../../components/MesaMap';
 import BillDetails from './BillDetails';
 import OrderMenu from '../mesero/OrderMenu';
 
-export default function CajaView({ appState, socket }) {
+export default function CajaView({ appState }) {
   const [selectedMesa, setSelectedMesa] = useState(null);
   const [isAddingExtra, setIsAddingExtra] = useState(false);
 
@@ -13,19 +14,60 @@ export default function CajaView({ appState, socket }) {
     setIsAddingExtra(false);
   };
 
-  const handleAddItems = (items) => {
+  const handleAddItems = async (itemsToAdd) => {
     if (!selectedMesa || !selectedMesa.currentOrderId) return;
-    socket.emit('add_items_to_order', { orderId: selectedMesa.currentOrderId, items });
+    
+    const order = appState.ordenes.find(o => o.id === selectedMesa.currentOrderId);
+    if (!order) return;
+
+    let updatedItems = [...order.items];
+    itemsToAdd.forEach(item => {
+      const existing = updatedItems.find(i => 
+        i.productId === item.productId && 
+        i.notes === item.notes &&
+        i.isToGo === item.isToGo &&
+        !i.dispatched
+      );
+      if (existing) {
+        existing.quantity += item.quantity;
+      } else {
+        updatedItems.push(item);
+      }
+    });
+
+    await supabase
+      .from('orders')
+      .update({ items: updatedItems, status: 'recibida' })
+      .eq('id', selectedMesa.currentOrderId);
+
     setIsAddingExtra(false);
   };
 
-  const handleCloseTable = (tableId, paymentMethod) => {
-    socket.emit('close_table', { tableId, paymentMethod });
+  const handleCloseTable = async (tableId, paymentMethod) => {
+    const mesa = appState.mesas.find(m => m.id === tableId);
+    if (!mesa || !mesa.currentOrderId) return;
+
+    // 1. Marcar la orden como pagada
+    await supabase
+      .from('orders')
+      .update({ 
+        status: 'pagada', 
+        closed_at: new Date().toISOString(), 
+        payment_method: paymentMethod 
+      })
+      .eq('id', mesa.currentOrderId);
+
+    // 2. Liberar la mesa
+    await supabase
+      .from('mesas')
+      .update({ status: 'libre', current_order_id: null })
+      .eq('id', tableId);
+
     setSelectedMesa(null);
     setIsAddingExtra(false);
   };
 
-  // Obtenemos la orden actual de la mesa seleccionada, si existe
+  // Obtenemos la orden actual de la mesa seleccionada
   const currentOrder = selectedMesa && selectedMesa.status === 'ocupada'
     ? appState.ordenes.find(o => o.id === selectedMesa.currentOrderId)
     : null;
@@ -43,7 +85,6 @@ export default function CajaView({ appState, socket }) {
       </div>
 
       <div style={{ display: 'flex', gap: '2rem', height: '75vh', minHeight: '650px', position: 'relative' }}>
-        {/* Lado izquierdo: Mapa de Mesas */}
         <div style={{ flex: 2, overflowY: 'auto' }}>
           <MesaMap 
             mesas={appState.mesas} 
@@ -52,7 +93,6 @@ export default function CajaView({ appState, socket }) {
           />
         </div>
 
-        {/* Lado derecho: Detalles de la Cuenta */}
         <div style={{ flex: 1.5, minWidth: '400px', overflowY: 'auto', paddingRight: '0.5rem' }}>
           <BillDetails 
             table={selectedMesa}
@@ -63,7 +103,6 @@ export default function CajaView({ appState, socket }) {
           />
         </div>
 
-        {/* Modal para Agregar Extras con el mismo menú del mesero */}
         {isAddingExtra && selectedMesa && (
           <div className="animate-in" style={{
             position: 'absolute',
