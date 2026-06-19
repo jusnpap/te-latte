@@ -95,7 +95,7 @@ export default function MeseroView({ appState }) {
           background: 'rgba(13, 17, 23, 0.95)', backdropFilter: 'blur(8px)',
           zIndex: 50, padding: '2rem', overflowY: 'auto'
         }}>
-          <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: '8rem' }}>
             <h2 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
               {selectedMesa.status === 'ocupada' ? `Agregando a Mesa ${selectedMesa.id}` : `Nueva Orden - Mesa ${selectedMesa.id}`}
             </h2>

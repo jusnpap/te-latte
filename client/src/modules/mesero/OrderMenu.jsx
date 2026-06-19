@@ -101,7 +101,7 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
             <button 
               key={item.id} 
               className="glass-card"
-              style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--surface-border)', borderRadius: '12px', cursor: 'pointer', color: 'var(--text-main)', textAlign: 'left' }}
+              style={{ padding: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--surface-border)', borderRadius: '12px', cursor: 'pointer', color: 'var(--text-main)', textAlign: 'left' }}
               onClick={() => handleAddItem(item)}
             >
               <span style={{ fontWeight: '500', marginBottom: '0.5rem', fontSize: '1.1rem' }}>{item.name}</span>
