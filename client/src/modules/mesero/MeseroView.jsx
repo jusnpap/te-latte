@@ -93,13 +93,14 @@ export default function MeseroView({ appState }) {
         <div className="animate-in" style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
           background: 'rgba(13, 17, 23, 0.95)', backdropFilter: 'blur(8px)',
-          zIndex: 50, display: 'flex', flexDirection: 'column', padding: '2rem'
+          zIndex: 50, display: 'flex', flexDirection: 'column', padding: '2rem',
+          overflowY: 'auto'
         }}>
-          <h2 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
+          <h2 style={{ marginBottom: '1.5rem', textAlign: 'center', flexShrink: 0 }}>
             {selectedMesa.status === 'ocupada' ? `Agregando a Mesa ${selectedMesa.id}` : `Nueva Orden - Mesa ${selectedMesa.id}`}
           </h2>
           
-          <div style={{ flex: 1, overflow: 'hidden', maxWidth: '1000px', width: '100%', margin: '0 auto' }}>
+          <div style={{ flex: 1, overflowY: 'auto', maxWidth: '1000px', width: '100%', margin: '0 auto' }}>
             <OrderMenu 
               menu={appState.menu}
               currentOrderItems={currentOrder?.items || []}

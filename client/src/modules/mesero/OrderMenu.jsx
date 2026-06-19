@@ -34,7 +34,7 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
                     onClick={() => handleAddItem(item)}
                   >
                     <span style={{ fontWeight: '500', marginBottom: '0.5rem', fontSize: '1.1rem' }}>{item.name}</span>
-                    <span style={{ color: 'var(--accent-green)', fontWeight: '600', fontSize: '1.2rem' }}>${item.price.toFixed(2)}</span>
+                    <span style={{ color: 'var(--accent-green)', fontWeight: '600', fontSize: '1.2rem' }}>${Number(item.price || 0).toFixed(2)}</span>
                   </button>
                 ))}
               </div>
