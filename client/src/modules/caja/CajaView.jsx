@@ -4,10 +4,12 @@ import { supabase } from '../../supabase';
 import MesaMap from '../../components/MesaMap';
 import BillDetails from './BillDetails';
 import OrderMenu from '../mesero/OrderMenu';
+import MenuManager from './MenuManager';
 
 export default function CajaView({ appState }) {
   const [selectedMesa, setSelectedMesa] = useState(null);
   const [isAddingExtra, setIsAddingExtra] = useState(false);
+  const [isManagingMenu, setIsManagingMenu] = useState(false);
 
   const handleMesaClick = (mesa) => {
     setSelectedMesa(mesa);
@@ -58,17 +60,23 @@ export default function CajaView({ appState }) {
       .eq('id', mesa.currentOrderId);
 
     // 2. Liberar la mesa
-    await supabase
-      .from('mesas')
-      .update({ status: 'libre', current_order_id: null })
-      .eq('id', tableId);
+    if (tableId !== 0) {
+      await supabase
+        .from('mesas')
+        .update({ status: 'libre', current_order_id: null })
+        .eq('id', tableId);
+    } else {
+       await supabase
+        .from('mesas')
+        .update({ status: 'libre', current_order_id: null })
+        .eq('id', 0);
+    }
 
     setSelectedMesa(null);
     setIsAddingExtra(false);
   };
 
-  // Obtenemos la orden actual de la mesa seleccionada
-  const currentOrder = selectedMesa && selectedMesa.status === 'ocupada'
+  const currentOrder = selectedMesa && selectedMesa.status !== 'libre'
     ? appState.ordenes.find(o => o.id === selectedMesa.currentOrderId)
     : null;
 
@@ -81,7 +89,10 @@ export default function CajaView({ appState }) {
           </h1>
           <p style={{ color: 'var(--text-muted)' }}>Centro de control de facturación y pagos.</p>
         </div>
-        <Link to="/" className="btn btn-outline">Volver al Inicio</Link>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button className="btn btn-primary" onClick={() => setIsManagingMenu(true)}>📋 Gestionar Menú</button>
+          <Link to="/" className="btn btn-outline">Volver al Inicio</Link>
+        </div>
       </div>
 
       <div style={{ display: 'flex', gap: '2rem', height: '75vh', minHeight: '650px', position: 'relative' }}>
@@ -103,6 +114,20 @@ export default function CajaView({ appState }) {
           />
         </div>
 
+        {isManagingMenu && (
+          <div className="animate-in" style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(13, 17, 23, 0.98)',
+            zIndex: 100,
+            display: 'flex',
+            flexDirection: 'column',
+            borderRadius: '16px'
+          }}>
+            <MenuManager menu={appState.menu} onClose={() => setIsManagingMenu(false)} />
+          </div>
+        )}
+
         {isAddingExtra && selectedMesa && (
           <div className="animate-in" style={{
             position: 'absolute',
@@ -115,7 +140,9 @@ export default function CajaView({ appState }) {
             padding: '1rem',
             borderRadius: '16px'
           }}>
-            <h2 style={{ marginBottom: '0.5rem', marginLeft: '1rem' }}>Agregando Extra a Mesa {selectedMesa.id}</h2>
+            <h2 style={{ marginBottom: '0.5rem', marginLeft: '1rem' }}>
+              Agregando Extra a {selectedMesa.id === 0 ? 'Caja / Para Llevar' : `Mesa ${selectedMesa.id}`}
+            </h2>
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <OrderMenu 
                 menu={appState.menu}

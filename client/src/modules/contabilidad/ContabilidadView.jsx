@@ -143,6 +143,7 @@ export default function ContabilidadView() {
                   <th style={{ padding: '1rem' }}>Productos Consumidos</th>
                   <th style={{ padding: '1rem', width: '120px' }}>Método</th>
                   <th style={{ padding: '1rem', width: '120px' }}>Total</th>
+                  <th style={{ padding: '1rem', width: '60px' }}></th>
                 </tr>
               </thead>
               <tbody>
@@ -152,7 +153,9 @@ export default function ContabilidadView() {
                   return (
                     <tr key={order.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                       <td style={{ padding: '1rem' }} title={order.id}>#{order.id.split('-')[0]}</td>
-                      <td style={{ padding: '1rem' }}>Mesa {order.tableId}</td>
+                      <td style={{ padding: '1rem' }}>
+                        {order.tableId === 0 ? 'Caja' : `Mesa ${order.tableId}`}
+                      </td>
                       <td style={{ padding: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                         {new Date(order.closedAt).toLocaleString()}
                       </td>
@@ -167,6 +170,20 @@ export default function ContabilidadView() {
                       </td>
                       <td style={{ padding: '1rem', textTransform: 'capitalize' }}>{order.paymentMethod}</td>
                       <td style={{ padding: '1rem', fontWeight: 'bold', color: 'var(--accent-green)' }}>${final.toFixed(2)}</td>
+                      <td style={{ padding: '1rem' }}>
+                        <button 
+                          onClick={async () => {
+                            if(window.confirm('¿Estás seguro de eliminar esta orden? Esto afectará los totales.')) {
+                              await supabase.from('orders').delete().eq('id', order.id);
+                              fetchReports();
+                            }
+                          }}
+                          style={{ background: 'transparent', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', fontSize: '1.2rem' }}
+                          title="Eliminar orden"
+                        >
+                          🗑️
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}

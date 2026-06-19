@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 
 export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, onAddItems, onSendOrder, onClose }) {
   const [localItems, setLocalItems] = useState([]);
-  const [activeTab, setActiveTab] = useState('cafes');
+  const activeMenu = menu.filter(item => item.is_active);
+  const categories = [...new Set(activeMenu.map(item => item.category))];
+  const [activeTab, setActiveTab] = useState(categories[0] || 'cafes');
 
   const handleAddItem = (product) => {
     setLocalItems(prev => {
@@ -37,12 +39,14 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
     onClose();
   };
 
+  const itemsForTab = activeMenu.filter(item => item.category === activeTab);
+
   return (
     <div className="glass animate-in" style={{ padding: '2rem', display: 'flex', gap: '2rem', height: '70vh', minHeight: '600px', marginTop: '1.5rem' }}>
       {/* Menu Categories and Items */}
       <div style={{ flex: 2, display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-          {Object.keys(menu).map(cat => (
+          {categories.map(cat => (
             <button 
               key={cat} 
               className={`btn ${activeTab === cat ? 'btn-primary' : 'btn-outline'}`}
@@ -55,7 +59,7 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
         </div>
         
         <div className="grid-auto" style={{ overflowY: 'auto', paddingRight: '1rem', alignContent: 'start' }}>
-          {menu[activeTab]?.map(item => (
+          {itemsForTab.map(item => (
             <button 
               key={item.id} 
               className="glass-card"
