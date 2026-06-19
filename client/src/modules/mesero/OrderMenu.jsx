@@ -13,9 +13,9 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
   };
 
   return (
-    <div className="glass animate-in responsive-flex" style={{ padding: '2rem', display: 'flex', gap: '2rem', height: '75vh', minHeight: '600px', marginTop: '1.5rem' }}>
+    <div className="glass animate-in responsive-flex" style={{ padding: '2rem', display: 'flex', gap: '2rem', marginTop: '1.5rem' }}>
       {/* Menu Categories and Items */}
-      <div style={{ flex: 2, display: 'flex', flexDirection: 'column', overflowY: 'auto', paddingRight: '1rem' }}>
+      <div style={{ flex: 2, display: 'flex', flexDirection: 'column' }}>
         {orderedCategories.map(cat => {
           const itemsForCat = activeMenu.filter(item => item.category === cat);
           if (itemsForCat.length === 0) return null;
@@ -44,7 +44,7 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
       </div>
 
       {/* Order Summary */}
-      <div style={{ flex: 1, background: 'rgba(0,0,0,0.2)', borderRadius: '12px', padding: '1.5rem', display: 'flex', flexDirection: 'column', minWidth: '320px' }}>
+      <div style={{ flex: 1, background: 'rgba(0,0,0,0.2)', borderRadius: '12px', padding: '1.5rem', display: 'flex', flexDirection: 'column', minWidth: '320px', alignSelf: 'flex-start', position: 'sticky', top: '2rem' }}>
         <h3 style={{ borderBottom: '1px solid var(--surface-border)', paddingBottom: '1rem', marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span>Resumen de Orden</span>
           <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
@@ -55,7 +55,7 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
           </span>
         </h3>
         
-        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', paddingRight: '0.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
           {/* Existing Items */}
           {currentOrderItems?.map((item, idx) => (
             <div key={`exist-${idx}`} style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.95rem', borderLeft: '3px solid var(--accent-green)', paddingLeft: '0.75rem' }}>
@@ -97,7 +97,7 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
           )}
         </div>
 
-        <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--surface-border)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--surface-border)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <button 
             className="btn btn-success" 
             style={{ width: '100%', padding: '1rem', fontSize: '1.1rem' }}
