@@ -4,6 +4,7 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
   const [localItems, setLocalItems] = useState([]);
   const activeMenu = menu.filter(item => item.is_active);
   const orderedCategories = ['principales', 'bebidas', 'acompañantes', 'arte'];
+  const [activeTab, setActiveTab] = useState(orderedCategories[0]);
 
   const categoryTitles = {
     'principales': 'Platos Principales',
@@ -45,35 +46,42 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
     onClose();
   };
 
+  const itemsForTab = activeMenu.filter(item => item.category === activeTab);
+
   return (
     <div className="glass animate-in responsive-flex" style={{ padding: '2rem', display: 'flex', gap: '2rem', marginTop: '1.5rem' }}>
       {/* Menu Categories and Items */}
       <div style={{ flex: 2, display: 'flex', flexDirection: 'column' }}>
-        {orderedCategories.map(cat => {
-          const itemsForCat = activeMenu.filter(item => item.category === cat);
-          if (itemsForCat.length === 0) return null;
-          
-          return (
-            <div key={cat} style={{ marginBottom: '2rem' }}>
-              <h3 style={{ borderBottom: '2px solid var(--surface-border)', paddingBottom: '0.5rem', marginBottom: '1rem', color: 'var(--primary-color)' }}>
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+          {orderedCategories.map(cat => {
+            const hasItems = activeMenu.some(item => item.category === cat);
+            if (!hasItems) return null;
+            return (
+              <button 
+                key={cat} 
+                className={`btn ${activeTab === cat ? 'btn-primary' : 'btn-outline'}`}
+                onClick={() => setActiveTab(cat)}
+                style={{ textTransform: 'capitalize', whiteSpace: 'nowrap' }}
+              >
                 {categoryTitles[cat] || cat}
-              </h3>
-              <div className="grid-auto">
-                {itemsForCat.map(item => (
-                  <button 
-                    key={item.id} 
-                    className="glass-card"
-                    style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--surface-border)', borderRadius: '12px', cursor: 'pointer', color: 'var(--text-main)', textAlign: 'left' }}
-                    onClick={() => handleAddItem(item)}
-                  >
-                    <span style={{ fontWeight: '500', marginBottom: '0.5rem', fontSize: '1.1rem' }}>{item.name}</span>
-                    <span style={{ color: 'var(--accent-green)', fontWeight: '600', fontSize: '1.2rem' }}>${Number(item.price || 0).toFixed(2)}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+              </button>
+            );
+          })}
+        </div>
+        
+        <div className="grid-auto">
+          {itemsForTab.map(item => (
+            <button 
+              key={item.id} 
+              className="glass-card"
+              style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--surface-border)', borderRadius: '12px', cursor: 'pointer', color: 'var(--text-main)', textAlign: 'left' }}
+              onClick={() => handleAddItem(item)}
+            >
+              <span style={{ fontWeight: '500', marginBottom: '0.5rem', fontSize: '1.1rem' }}>{item.name}</span>
+              <span style={{ color: 'var(--accent-green)', fontWeight: '600', fontSize: '1.2rem' }}>${Number(item.price || 0).toFixed(2)}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Order Summary */}
