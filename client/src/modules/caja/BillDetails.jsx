@@ -24,8 +24,10 @@ export default function BillDetails({ table, order, onAddExtraClick, onCloseTabl
   return (
     <div className="glass animate-in" style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--surface-border)', paddingBottom: '1rem' }}>
-        <h2 style={{ margin: 0 }}>Mesa {table.id}</h2>
-        <span style={{ color: 'var(--text-muted)' }}>Orden #{order.id}</span>
+        <h2 style={{ margin: 0 }}>
+          {table.id === 0 ? 'Caja / Para Llevar' : `Mesa ${table.id}`}
+        </h2>
+        <span style={{ color: 'var(--text-muted)' }}>Orden #{order.id.split('-')[0]}</span>
       </div>
 
       <div style={{ marginBottom: '1.5rem', paddingRight: '0.5rem' }}>

@@ -41,9 +41,11 @@ export default function MesaMap({ mesas, onMesaClick, selectedMesaId }) {
                 background: isOccupied ? 'var(--accent-red)' : 'var(--accent-green)',
                 boxShadow: `0 0 10px ${isOccupied ? 'var(--accent-red)' : 'var(--accent-green)'}`
               }} />
-              <span style={{ fontSize: '1.25rem', fontWeight: '600' }}>Mesa {mesa.id}</span>
+              <span style={{ fontSize: '1.25rem', fontWeight: '600', textAlign: 'center' }}>
+                {mesa.id === 0 ? 'Caja / Para Llevar' : `Mesa ${mesa.id}`}
+              </span>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                {isOccupied ? 'Ocupada' : 'Libre'}
+                {isOccupied ? 'Ocupada / Pendiente' : 'Libre'}
               </span>
             </button>
           );

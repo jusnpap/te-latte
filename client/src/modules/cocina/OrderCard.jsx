@@ -42,7 +42,9 @@ export default function OrderCard({ order, onDispatch, isCompleted }) {
       opacity: isCompleted ? 0.8 : 1
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--surface-border)', paddingBottom: '0.75rem' }}>
-        <h3 style={{ margin: 0, fontSize: '1.4rem' }}>Mesa {order.tableId}</h3>
+        <h3 style={{ margin: 0, fontSize: '1.4rem' }}>
+          {order.tableId === 0 ? 'Caja / Para Llevar' : `Mesa ${order.tableId}`}
+        </h3>
         <span style={{ 
           fontSize: '0.9rem', 
           fontWeight: 'bold', 
