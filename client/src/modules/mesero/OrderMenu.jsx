@@ -12,6 +12,39 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
     'arte': 'Experiencia de Arte'
   };
 
+  const handleAddItem = (product) => {
+    setLocalItems(prev => {
+      const existing = prev.find(i => i.productId === product.id && i.notes === '' && !i.isToGo);
+      if (existing) {
+        return prev.map(i => (i.productId === product.id && i.notes === '' && !i.isToGo) ? { ...i, quantity: i.quantity + 1 } : i);
+      }
+      return [...prev, { productId: product.id, name: product.name, price: product.price, quantity: 1, notes: '', isToGo: false }];
+    });
+  };
+
+  const handleRemoveLocal = (indexToRemove) => {
+    setLocalItems(prev => prev.filter((_, idx) => idx !== indexToRemove));
+  };
+
+  const handleUpdateNotes = (indexToUpdate, notes) => {
+    setLocalItems(prev => prev.map((item, idx) => idx === indexToUpdate ? { ...item, notes } : item));
+  };
+
+  const handleToggleToGo = (indexToUpdate, isToGo) => {
+    setLocalItems(prev => prev.map((item, idx) => idx === indexToUpdate ? { ...item, isToGo } : item));
+  };
+
+  const handleSend = () => {
+    if (localItems.length === 0) return;
+    if (isExistingOrder) {
+      onAddItems(localItems);
+    } else {
+      onSendOrder(localItems);
+    }
+    setLocalItems([]);
+    onClose();
+  };
+
   return (
     <div className="glass animate-in responsive-flex" style={{ padding: '2rem', display: 'flex', gap: '2rem', marginTop: '1.5rem' }}>
       {/* Menu Categories and Items */}
