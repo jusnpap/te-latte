@@ -46,8 +46,8 @@ export default function ContabilidadView() {
     
     reports.forEach(order => {
       const sub = order.items.reduce((acc, i) => acc + (i.price * i.quantity), 0);
-      const tax = sub * 0.16;
-      const final = sub + tax;
+      const toGoItemsCount = order.items.reduce((acc, i) => i.isToGo ? acc + i.quantity : acc, 0);
+      const final = sub + (toGoItemsCount * 0.25);
       
       total += final;
       if (order.paymentMethod && byMethod[order.paymentMethod] !== undefined) {
@@ -149,7 +149,8 @@ export default function ContabilidadView() {
               <tbody>
                 {reports.slice().map(order => {
                   const sub = order.items.reduce((acc, i) => acc + (i.price * i.quantity), 0);
-                  const final = sub + (sub * 0.16);
+                  const toGoItemsCount = order.items.reduce((acc, i) => i.isToGo ? acc + i.quantity : acc, 0);
+                  const final = sub + (toGoItemsCount * 0.25);
                   return (
                     <tr key={order.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                       <td style={{ padding: '1rem' }} title={order.id}>#{order.id.split('-')[0]}</td>

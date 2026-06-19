@@ -12,12 +12,11 @@ export default function BillDetails({ table, order, onAddExtraClick, onCloseTabl
   }
 
   const subtotal = order.items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const tax = subtotal * 0.16; // 16% IVA simulado
-  const total = subtotal + tax;
+  const toGoItemsCount = order.items.reduce((acc, item) => item.isToGo ? acc + item.quantity : acc, 0);
+  const toGoFee = toGoItemsCount * 0.25;
+  const total = subtotal + toGoFee;
 
   const handlePrintAndClose = () => {
-    // Simulamos la impresión
-    window.print();
     onCloseTable(table.id, paymentMethod);
   };
 
@@ -35,7 +34,7 @@ export default function BillDetails({ table, order, onAddExtraClick, onCloseTabl
         {order.items.map((item, idx) => (
           <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
             <div>
-              <span style={{ fontWeight: '600', color: 'var(--primary-color)', marginRight: '0.5rem' }}>{item.quantity}x</span> {item.name} {item.isToGo && <span style={{fontSize:'0.8rem', color:'var(--accent-yellow)'}}>(Para llevar)</span>}
+              <span style={{ fontWeight: '600', color: 'var(--primary-color)', marginRight: '0.5rem' }}>{item.quantity}x</span> {item.name} {item.isToGo && <span style={{fontSize:'0.8rem', color:'var(--accent-yellow)'}}>(Para llevar +$0.25)</span>}
             </div>
             <span style={{ fontWeight: '500' }}>${(item.price * item.quantity).toFixed(2)}</span>
           </div>
@@ -51,11 +50,13 @@ export default function BillDetails({ table, order, onAddExtraClick, onCloseTabl
           <span>Subtotal</span>
           <span>${subtotal.toFixed(2)}</span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', color: 'var(--text-muted)', borderBottom: '1px solid var(--surface-border)', paddingBottom: '1rem' }}>
-          <span>Impuestos (16%)</span>
-          <span>${tax.toFixed(2)}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', fontSize: '1.6rem', fontWeight: 'bold', color: 'var(--accent-green)' }}>
+        {toGoFee > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', color: 'var(--accent-yellow)', borderBottom: '1px solid var(--surface-border)', paddingBottom: '1rem' }}>
+            <span>Recargo para llevar ($0.25 c/u)</span>
+            <span>${toGoFee.toFixed(2)}</span>
+          </div>
+        )}
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', fontSize: '1.6rem', fontWeight: 'bold', color: 'var(--accent-green)', paddingTop: toGoFee === 0 ? '1rem' : 0, borderTop: toGoFee === 0 ? '1px solid var(--surface-border)' : 'none' }}>
           <span>Total</span>
           <span>${total.toFixed(2)}</span>
         </div>
