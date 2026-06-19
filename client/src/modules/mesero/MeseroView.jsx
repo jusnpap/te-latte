@@ -99,7 +99,7 @@ export default function MeseroView({ appState }) {
             {selectedMesa.status === 'ocupada' ? `Agregando a Mesa ${selectedMesa.id}` : `Nueva Orden - Mesa ${selectedMesa.id}`}
           </h2>
           
-          <div style={{ flex: 1, overflow: 'hidden', maxWidth: '800px', width: '100%', margin: '0 auto' }}>
+          <div style={{ flex: 1, overflow: 'hidden', maxWidth: '1000px', width: '100%', margin: '0 auto' }}>
             <OrderMenu 
               menu={appState.menu}
               currentOrderItems={currentOrder?.items || []}
