@@ -66,7 +66,7 @@ export default function OrderCard({ order, onDispatch, isCompleted }) {
           return (
             <div key={idx} style={{ padding: '0.75rem', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', borderLeft: `3px solid ${isCompleted || isItemDispatched ? 'var(--accent-green)' : 'var(--primary-color)'}`, opacity: isItemDispatched && !isCompleted ? 0.6 : 1 }}>
               <div style={{ fontWeight: '500', fontSize: '1.1rem', textDecoration: isCompleted || isItemDispatched ? 'line-through' : 'none' }}>
-                {item.quantity}x {item.name} {item.isToGo && <span style={{fontSize: '0.8rem', color: 'var(--accent-yellow)', textDecoration: 'none', marginLeft: '0.5rem'}}>(Para llevar)</span>}
+                {item.quantity}x {item.name} {item.isToGo && <span style={{fontSize: '0.8rem', color: 'var(--accent-yellow)', textDecoration: 'none', marginLeft: '0.5rem'}}>({item.toGoQuantity || item.quantity} para llevar)</span>}
               </div>
               {item.notes && <div style={{ color: '#ff9e9e', fontSize: '0.9rem', fontStyle: 'italic', marginTop: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                 <span style={{textDecoration: 'none'}}>⚠️</span> <span style={{textDecoration: 'none'}}>{item.notes}</span>

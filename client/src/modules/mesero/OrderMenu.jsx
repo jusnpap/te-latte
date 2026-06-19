@@ -15,11 +15,11 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
 
   const handleAddItem = (product) => {
     setLocalItems(prev => {
-      const existing = prev.find(i => i.productId === product.id && i.notes === '' && !i.isToGo);
+      const existing = prev.find(i => i.productId === product.id && i.notes === '');
       if (existing) {
-        return prev.map(i => (i.productId === product.id && i.notes === '' && !i.isToGo) ? { ...i, quantity: i.quantity + 1 } : i);
+        return prev.map(i => (i.productId === product.id && i.notes === '') ? { ...i, quantity: i.quantity + 1 } : i);
       }
-      return [...prev, { productId: product.id, name: product.name, price: product.price, quantity: 1, notes: '', isToGo: false }];
+      return [...prev, { productId: product.id, name: product.name, price: product.price, quantity: 1, notes: '', isToGo: false, toGoQuantity: 0 }];
     });
   };
 
@@ -31,8 +31,35 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
     setLocalItems(prev => prev.map((item, idx) => idx === indexToUpdate ? { ...item, notes } : item));
   };
 
-  const handleToggleToGo = (indexToUpdate, isToGo) => {
-    setLocalItems(prev => prev.map((item, idx) => idx === indexToUpdate ? { ...item, isToGo } : item));
+  const handleToggleToGo = (indexToUpdate, checked) => {
+    setLocalItems(prev => prev.map((item, idx) => 
+      idx === indexToUpdate ? { ...item, isToGo: checked, toGoQuantity: checked ? 1 : 0 } : item
+    ));
+  };
+
+  const handleUpdateToGoQuantity = (indexToUpdate, delta) => {
+    setLocalItems(prev => prev.map((item, idx) => {
+      if (idx === indexToUpdate) {
+        let newToGo = (item.toGoQuantity || 1) + delta;
+        if (newToGo < 1) newToGo = 1;
+        if (newToGo > item.quantity) newToGo = item.quantity;
+        return { ...item, toGoQuantity: newToGo };
+      }
+      return item;
+    }));
+  };
+  
+  const handleUpdateQuantity = (indexToUpdate, delta) => {
+    setLocalItems(prev => prev.map((item, idx) => {
+      if (idx === indexToUpdate) {
+        let newQty = item.quantity + delta;
+        if (newQty < 1) newQty = 1;
+        let newToGo = item.toGoQuantity || 0;
+        if (newToGo > newQty) newToGo = newQty;
+        return { ...item, quantity: newQty, toGoQuantity: newToGo };
+      }
+      return item;
+    }));
   };
 
   const handleSend = () => {
@@ -102,6 +129,7 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
             <div key={`exist-${idx}`} style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.95rem', borderLeft: '3px solid var(--accent-green)', paddingLeft: '0.75rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span>{item.quantity}x {item.name} <span style={{fontSize:'0.8rem'}}>(Enviado)</span></span>
+                {item.isToGo && <span style={{fontSize:'0.8rem', color: 'var(--accent-yellow)'}}>({item.toGoQuantity || item.quantity} para llevar)</span>}
                 {item.notes && <span style={{ fontSize: '0.8rem', fontStyle: 'italic' }}>{item.notes}</span>}
               </div>
               <span>${(item.price * item.quantity).toFixed(2)}</span>
@@ -111,23 +139,42 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
           {/* New Items */}
           {localItems.map((item, idx) => (
             <div key={`local-${idx}`} style={{ background: 'rgba(255,255,255,0.05)', padding: '0.75rem', borderRadius: '8px', borderLeft: '3px solid var(--primary-color)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <span style={{ fontWeight: '500' }}>{item.quantity}x {item.name} {item.isToGo && <span style={{fontSize: '0.8rem', color: 'var(--accent-yellow)'}}>(Para llevar)</span>}</span>
-                <span>${(item.price * item.quantity).toFixed(2)}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <button onClick={() => handleUpdateQuantity(idx, -1)} className="btn btn-outline" style={{ padding: '0.1rem 0.4rem' }}>-</button>
+                  <span style={{ fontWeight: '500' }}>{item.quantity}</span>
+                  <button onClick={() => handleUpdateQuantity(idx, 1)} className="btn btn-outline" style={{ padding: '0.1rem 0.4rem' }}>+</button>
+                  <span style={{ fontWeight: '500', marginLeft: '0.5rem' }}>{item.name}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span>${(item.price * item.quantity).toFixed(2)}</span>
+                  <button onClick={() => handleRemoveLocal(idx)} style={{ background: 'transparent', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', fontSize: '1.2rem', marginLeft: '0.5rem' }}>×</button>
+                </div>
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <input 
                   type="text" 
                   placeholder="Notas (ej. sin azúcar)" 
                   value={item.notes}
                   onChange={(e) => handleUpdateNotes(idx, e.target.value)}
-                  style={{ flex: 1, background: 'rgba(0,0,0,0.3)', border: '1px solid var(--surface-border)', color: '#fff', padding: '0.4rem', borderRadius: '4px', fontSize: '0.8rem' }}
+                  style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--surface-border)', color: '#fff', padding: '0.4rem', borderRadius: '4px', fontSize: '0.8rem' }}
                 />
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.8rem', cursor: 'pointer', color: 'var(--text-muted)' }}>
-                  <input type="checkbox" checked={item.isToGo} onChange={(e) => handleToggleToGo(idx, e.target.checked)} style={{ accentColor: 'var(--primary-color)' }} />
-                  Para llevar
-                </label>
-                <button onClick={() => handleRemoveLocal(idx)} style={{ background: 'transparent', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', fontSize: '1.2rem', paddingLeft: '0.5rem' }}>×</button>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.2rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.8rem', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                    <input type="checkbox" checked={item.isToGo} onChange={(e) => handleToggleToGo(idx, e.target.checked)} style={{ accentColor: 'var(--primary-color)' }} />
+                    Para llevar
+                  </label>
+                  {item.isToGo && item.quantity > 1 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--accent-yellow)' }}>
+                      <button onClick={() => handleUpdateToGoQuantity(idx, -1)} className="btn btn-outline" style={{ padding: '0.1rem 0.4rem' }}>-</button>
+                      <span>{item.toGoQuantity || 1} para llevar</span>
+                      <button onClick={() => handleUpdateToGoQuantity(idx, 1)} className="btn btn-outline" style={{ padding: '0.1rem 0.4rem' }}>+</button>
+                    </div>
+                  )}
+                  {item.isToGo && item.quantity === 1 && (
+                    <span style={{ fontSize: '0.8rem', color: 'var(--accent-yellow)' }}>(1 para llevar)</span>
+                  )}
+                </div>
               </div>
             </div>
           ))}

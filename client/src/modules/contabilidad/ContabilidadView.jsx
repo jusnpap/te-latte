@@ -46,7 +46,11 @@ export default function ContabilidadView() {
     
     reports.forEach(order => {
       const sub = order.items.reduce((acc, i) => acc + (i.price * i.quantity), 0);
-      const toGoItemsCount = order.items.reduce((acc, i) => i.isToGo ? acc + i.quantity : acc, 0);
+      const toGoItemsCount = order.items.reduce((acc, i) => {
+        if (typeof i.toGoQuantity === 'number') return acc + i.toGoQuantity;
+        if (i.isToGo) return acc + i.quantity;
+        return acc;
+      }, 0);
       const final = sub + (toGoItemsCount * 0.25);
       
       total += final;

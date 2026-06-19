@@ -12,7 +12,11 @@ export default function BillDetails({ table, order, onAddExtraClick, onCloseTabl
   }
 
   const subtotal = order.items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const toGoItemsCount = order.items.reduce((acc, item) => item.isToGo ? acc + item.quantity : acc, 0);
+  const toGoItemsCount = order.items.reduce((acc, item) => {
+    if (typeof item.toGoQuantity === 'number') return acc + item.toGoQuantity;
+    if (item.isToGo) return acc + item.quantity;
+    return acc;
+  }, 0);
   const toGoFee = toGoItemsCount * 0.25;
   const total = subtotal + toGoFee;
 
