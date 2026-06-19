@@ -95,7 +95,7 @@ export default function CajaView({ appState }) {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '2rem', height: '75vh', minHeight: '650px', position: 'relative' }}>
+      <div className="responsive-flex" style={{ display: 'flex', gap: '2rem', height: '75vh', minHeight: '650px', position: 'relative' }}>
         <div style={{ flex: 2, overflowY: 'auto' }}>
           <MesaMap 
             mesas={appState.mesas} 

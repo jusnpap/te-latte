@@ -42,7 +42,7 @@ export default function OrderMenu({ menu, currentOrderItems, isExistingOrder, on
   const itemsForTab = activeMenu.filter(item => item.category === activeTab);
 
   return (
-    <div className="glass animate-in" style={{ padding: '2rem', display: 'flex', gap: '2rem', height: '70vh', minHeight: '600px', marginTop: '1.5rem' }}>
+    <div className="glass animate-in responsive-flex" style={{ padding: '2rem', display: 'flex', gap: '2rem', height: '70vh', minHeight: '600px', marginTop: '1.5rem' }}>
       {/* Menu Categories and Items */}
       <div style={{ flex: 2, display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>

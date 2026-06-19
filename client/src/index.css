@@ -139,3 +139,59 @@ h1, h2, h3, h4, h5, h6 {
 .animate-in {
   animation: fadeIn 0.3s ease-out forwards;
 }
+
+/* Responsive Utilities for Mobile */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 1rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .header > div {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  /* Helper to stack flex layouts vertically on small screens */
+  .responsive-flex {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow-y: visible !important;
+  }
+  
+  .responsive-flex > div {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
+    overflow-y: visible !important;
+  }
+
+  .grid-auto {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+  
+  .glass {
+    padding: 1.25rem !important;
+  }
+
+  /* Make tables horizontally scrollable more easily */
+  table th, table td {
+    padding: 0.75rem !important;
+    font-size: 0.9rem;
+  }
+
+  /* Adjust buttons */
+  .btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+}
