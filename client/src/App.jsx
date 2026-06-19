@@ -47,6 +47,8 @@ function Home({ currentUser, onLogout }) {
   );
 }
 
+import ErrorBoundary from './ErrorBoundary';
+
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [appState, setAppState] = useState({ mesas: [], ordenes: [], menu: [] });
@@ -84,16 +86,18 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={currentUser ? <Navigate to="/" /> : <LoginView onLogin={setCurrentUser} />} />
-        <Route path="/" element={<Home currentUser={currentUser} onLogout={() => setCurrentUser(null)} />} />
-        <Route path="/mesero" element={currentUser ? <MeseroView appState={appState} /> : <Navigate to="/login" />} />
-        <Route path="/cocina" element={currentUser ? <CocinaView appState={appState} /> : <Navigate to="/login" />} />
-        <Route path="/caja" element={currentUser ? <CajaView appState={appState} /> : <Navigate to="/login" />} />
-        <Route path="/contabilidad" element={currentUser ? <ContabilidadView /> : <Navigate to="/login" />} />
-      </Routes>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={currentUser ? <Navigate to="/" /> : <LoginView onLogin={setCurrentUser} />} />
+          <Route path="/" element={<Home currentUser={currentUser} onLogout={() => setCurrentUser(null)} />} />
+          <Route path="/mesero" element={currentUser ? <MeseroView appState={appState} /> : <Navigate to="/login" />} />
+          <Route path="/cocina" element={currentUser ? <CocinaView appState={appState} /> : <Navigate to="/login" />} />
+          <Route path="/caja" element={currentUser ? <CajaView appState={appState} /> : <Navigate to="/login" />} />
+          <Route path="/contabilidad" element={currentUser ? <ContabilidadView /> : <Navigate to="/login" />} />
+        </Routes>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
